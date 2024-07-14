@@ -94,11 +94,29 @@ greyjoy.menu = function(rootdir, elements)
 
             if greyjoy.output_results == "toggleterm" then
                 greyjoy.to_toggleterm(command)
+            elseif greyjoy.output_results == "nvterm" then
+                greyjoy.to_nvterm(command)
             else
                 greyjoy.to_buffer(command)
             end
         end
     end)
+end
+
+greyjoy.to_nvterm = function(command)
+    local ok, nvterm = pcall(require, "nvchad.term")
+    if not ok then
+        vim.notify("Unable to require nvterm, please run healthcheck.")
+
+        return
+    end
+    local commandstr = table.concat(command.command, " ")
+    nvterm.runner {
+      pos = "float",
+      cmd = commandstr,
+      id = "runner",
+      clear_cmd = false
+    }
 end
 
 greyjoy.to_toggleterm = function(command)
